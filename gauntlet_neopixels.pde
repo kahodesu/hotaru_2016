@@ -86,8 +86,12 @@ void gauntletColor(String colorName, int brightness, int neopixels) {
   }
 
   else if (colorName == "fire") {
-    if (fireTimer.isFinished()==true) {
-      gauntletColor("red", brightness, neopixels);
+    if (fireTimer2.isFinished()==true) {
+      for (int i=0; i<neopixels * 3; i=i+3) {
+      gauntletBlob[i] = byte(brightness);
+      gauntletBlob[i+1] = byte(0);
+      gauntletBlob[i+2] = byte(0);
+    }
       //println("random");
       for (int i=0; i<neopixels * 3; i=i+3) {
         if (int(random(1, 10))%3 ==0) {
@@ -96,7 +100,7 @@ void gauntletColor(String colorName, int brightness, int neopixels) {
           gauntletBlob[i+2] = byte(0);
         }
       }
-      fireTimer.start();
+      fireTimer2.start();
     }
   }
 

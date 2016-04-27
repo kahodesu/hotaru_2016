@@ -1,3 +1,17 @@
+//TODO
+// add new defense mechanic for tank person too. 
+// think of analog gameplay
+// feedback for successfully defending - animation on lights? 
+// health points, deterioting when defending badly 
+// end state -- staying alive for whole game 
+// maybe as long as you shoot the attacks remain manageable
+// on GUI: be able to adjust win state 
+
+
+int minHealth = 20;
+int minSuccess = 3;
+int hurt = 0; //0 = default, 1 = a little hurt, 2 = kinda hurt, 3= hurt, 4 = pretty hurt. 
+
 int state; //REST
 int REST = 0;
 int GAME = 1;
@@ -10,32 +24,41 @@ int proxVal = 0;
 boolean shootOn = false;
 boolean sweetSpot = false;
 boolean lastSweetSpot = false;
+
+int health = 0;
+int success = 0;
+int counterDepleteFast =0;
+
+PImage img, img2;
+
 void setup() {
   size(600, 600);
-  setupGUI();
-  setupSound();
-  setupOSC();
-  setUpTimer();
-
-  state = REST;
-  gauntletWipe();
-  tankWipe();
+  resetEverything();
 }
 void draw() {
-println("  prox: " + proxVal);
+  //println("  prox: " + proxVal);
   /////////////////////GUI shit///////////////////
-  background(255);
+  if (attractOn == true) {
+    
+    image(img, 0, 0);
+    gauntletColor("flash", 150, 28);
+    tankColor("flash", 150, 10);
+    tankShow();
+    gauntletShow();
+  }
+  else {
+    background(255);
+  }
   drawLine();
   drawAttacks();
+  //println(health + "---"+ success);
+  println("state: " + state +"  tankLevel: "+tankLevel+"  proxVal: "+ proxVal +"  handsHolding: " + handsHolding);
+  //println();
 
-//  println("state: " + state +"  tankLevel: "+tankLevel+"  proxVal: "+ proxVal);
-//print("  state: " + state);
 
-   //gauntletColor("flash", 255, 28);
-   //gauntletShow();
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   if (state == REST) {
     gameOverSong.pause();
@@ -46,8 +69,8 @@ println("  prox: " + proxVal);
     drawCursor();
   } 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   else if (state == GAME) {
     restSong.pause();
@@ -60,66 +83,85 @@ println("  prox: " + proxVal);
     }
 
     ////////////TANK STUFF/////////////
-    tankColor("white", 255, tankLevel);
-    tankShow();
+
     checkTank();
     depleteTank();
 
     ////////////GAUNTLET STUFF/////////////
-    gauntletColor("white", 255, gauntletLevel);
-    gauntletShow();
 
-    
-    if (tankLevel >5 && handsHolding == true && gauntletIMUx <0 && gauntletIMUy<0 && gauntletIMUz<0) {
-      
-if (!power.isPlaying()) {
-    power.rewind();
-    power.play();
-  }
-if(chargeGauntletTimer.isFinished()){
-        gauntletLevel ++;
-chargeGauntletTimer.start();
-}
-        if (gauntletLevel > 28) {
-          gauntletLevel = 28;
-        }
-        if (gauntletLevel < 0) {
-          gauntletLevel = 0;
-        }
-      
+    if (warning.isPlaying()) {
+
+      tankColor("fire", 255, 10);
+      tankShow();
+      gauntletColor("fire", 255, 28);
+      gauntletShow();
+      if (gauntletIMUx<40 && gauntletIMUx>-10 && gauntletIMUy<0 && gauntletIMUz<0) {
+        health++;
+      }
+    } else {
+      gauntletColor("white", 255, gauntletLevel);
+      gauntletShow();
+      tankColor("white", 255, tankLevel);
+      tankShow();
     }
-    if (gauntletLevel >25 && gauntletIMUx > 70  && gauntletIMUx<100 && gauntletIMUy<0 && gauntletIMUz <0)  {
-      if (shootOn == false ) {
-          shootOn = true;
-        power.pause();
-      power.rewind();
-    
-      gauntletWipe();
-      delay(500);
-             shoot.trigger();
-           gauntletColor("white", 255, 28);
-        gauntletShow();
-           delay(1000); 
-       gauntletLevel =0;
-      shootOn = false;
-    
 
+
+    if (tankLevel >0 && handsHolding == true && gauntletIMUx<0 && gauntletIMUz<0) {
+      depleteFast();
+
+      if (!power.isPlaying()) {
+        power.rewind();
+        power.play();
+      }
+      if (chargeGauntletTimer.isFinished()) {
+        gauntletLevel ++;
+        chargeGauntletTimer.start();
+      }
+      if (gauntletLevel > 28) {
+        gauntletLevel = 28;
+      }
+      if (gauntletLevel < 0) {
+        gauntletLevel = 0;
       }
     }
-    
+    if (gauntletLevel >25 && handsHolding == false && gauntletIMUx > 70  && gauntletIMUx<100 && gauntletIMUy<0 && gauntletIMUz <0) {
+      if (shootOn == false ) {
+        shootOn = true;
+        power.pause();
+        power.rewind();
+
+        gauntletWipe();
+        delay(500);
+        shoot.trigger();
+        success++;
+        gauntletColor("white", 255, 28);
+        gauntletShow();
+        delay(1000); 
+        gauntletLevel =0;
+        shootOn = false;
+      }
+    }
+
 
     //println(handsHolding);//FOR DEBUG
   } 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   else if (state == GAMEOVER) {
-gameSong.pause();
-restSong.pause();
-    gauntletColor("flash", 255, 28);
-    gauntletShow();
-    tankColor("flash", 255, 10);
-    tankShow();
+    gameSong.pause();
+    restSong.pause();
+    if (health > minHealth && success > minSuccess) {
+      gauntletColor("flash", 255, 28);
+      gauntletShow();
+      tankColor("flash", 255, 10);
+      tankShow();
+    } else {
+      gauntletColor("fire", 100, 28);
+      gauntletShow();
+      tankColor("fire", 100, 10);
+      tankShow();
+    }
     if (!gameOverSong.isPlaying()) {
       gameOverSong.loop();
     }
@@ -127,8 +169,8 @@ restSong.pause();
       state=0;
       pressReset();
       currentTime = 0;
- gauntletWipe();
-  tankWipe();
+      gauntletWipe();
+      tankWipe();
     }
   }
 }
@@ -141,34 +183,27 @@ restSong.pause();
 void checkTank() {
   println(sweetSpot);
   if (proxVal >50 && proxVal <80) {
-  
-    sweetSpot = true;
-   
-  }
-  else {
-    sweetSpot = false;
-   
 
+    sweetSpot = true;
+  } else {
+    sweetSpot = false;
   }
   if (sweetSpot == true && lastSweetSpot == true) {
-    sweetSpotCounter++;  
-
-  
-
+    sweetSpotCounter++;
   }
-  if (sweetSpotCounter >15 && sweetSpot == false && lastSweetSpot == false) {
+  if (sweetSpotCounter >10 && sweetSpot == false && lastSweetSpot == false) {
     tankLevel++;
     ELOn();
     if (!charge.isPlaying()) {
-    charge.rewind();
-charge.play();
-  }
+      charge.rewind();
+      charge.play();
+    }
     sweetSpotCounter =0;
     if (tankLevel >10) {
       tankLevel = 10;
     }
   }
- 
+
 
   lastSweetSpot = sweetSpot;
 }
@@ -182,4 +217,27 @@ void depleteTank() {
     }
     depleteTankTimer.start();
   }
+}
+
+void depleteFast () {
+  counterDepleteFast++;
+  if (counterDepleteFast%50 ==0) {
+    tankLevel --;
+  }
+}
+
+void resetEverything() {
+  setupGUI();
+  setupSound();
+  setupOSC();
+  setUpTimer();
+  state = REST;
+  gauntletWipe();
+  tankWipe();
+  ELOff();
+  success=0;
+  health = 0;
+  hurt = 0;
+  img = loadImage("attractmode.png");
+  img2 = loadImage("submitfirst.png");
 }

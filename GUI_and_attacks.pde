@@ -2,11 +2,11 @@
 import interfascia.*;
 
 ///////////VARIABLES TO SET////////////
-IFLookAndFeel newLook;
+IFLookAndFeel defaultLook;
 GUIController c;
-IFTextField glText, a1Text, a2Text, a3Text;
-IFLabel titleLabel, glLabel, glHint, a1Label, a1Hint, a2Label, a2Hint, a3Label, a3Hint;
-IFButton submitButton, resetButton, playButton, pauseButton;
+IFTextField glText, a1Text, a2Text, a3Text, a4Text;
+IFLabel titleLabel, glLabel, glHint, a1Label, a1Hint, a2Label, a2Hint, a3Label, a3Hint, a4Label, a4Hint ;
+IFButton submitButton, resetButton, playButton, pauseButton, attractButton;
 
 int gameLength= 60;
 float currentTime = 0;
@@ -20,7 +20,9 @@ int totalAttacks;
 int[] attackTimes = new int[0];
 boolean[] attacked = new boolean[0];
 boolean[] lastAttacked = new boolean[0];
-
+boolean attractOn = false;
+boolean firstSubmit = false; 
+int healthBeforeDeath = 3; 
 //////////////FUNCTIONS////////////////
 void setupGUI () {
 
@@ -31,6 +33,7 @@ void setupGUI () {
   a1Text= new IFTextField("", width/3-50, 200, 45, "0");
   a2Text= new IFTextField("", width/3-50, 225, 45, "2");
   a3Text= new IFTextField("", width/3-50, 250, 45, "3");
+ a4Text= new IFTextField("", width/3-50, 280, 45, "3");
 
   //glLabel, glHint, a1Label, a1Hint, a2Label, a2Hint, a3Label, a3Hint;
   titleLabel = new IFLabel("-- HOTARU GAME SETTINGS --", width/2-75, 25);
@@ -42,22 +45,30 @@ void setupGUI () {
   a2Hint = new IFLabel("* default 2", width/3, 230);
   a3Label = new IFLabel("Stage3 Attacks:", 50, 255);
   a3Hint = new IFLabel("* default 3", width/3, 255);
+  a4Label = new IFLabel("Health Before\nDeath:", 50, 280);
+  a4Hint = new IFLabel("* default 3", width/3, 280);
 
-  submitButton = new IFButton ("SUBMIT", width/3-50, 300, 100, 25);
+  submitButton = new IFButton ("SUBMIT", width/3-50, 325, 100, 25);
   resetButton = new IFButton ("RESET", width/2-50, 550, 100, 25);
   playButton = new IFButton ("PLAY \n (space bar)", 2*width/5-50, 475, 100, 40);
   pauseButton = new IFButton ("PAUSE  \n  (space bar)", 3*width/5-50, 475, 100, 40);
+  attractButton = new IFButton ("ATTRACT", width/5, 75 , 100, 25);
 
   submitButton.addActionListener(this);
   resetButton.addActionListener(this);
   playButton.addActionListener(this);
   pauseButton.addActionListener(this);
+  attractButton.addActionListener(this);
 
-  newLook = new IFLookAndFeel(this, IFLookAndFeel.DEFAULT);
-  newLook.baseColor = color(200, 200, 200);
-  newLook.highlightColor = color(100, 100, 100);
+  defaultLook = new IFLookAndFeel(this, IFLookAndFeel.DEFAULT);
+  defaultLook.baseColor = color(178, 196, 222);
+  defaultLook.highlightColor = color(119, 136, 153);
+  defaultLook.activeColor = color(225, 30, 30);
+  defaultLook.borderColor = color(178, 196, 222);
 
-  c.setLookAndFeel(newLook);
+  
+  c.setLookAndFeel(defaultLook);
+
   c.add (titleLabel);
   c.add (glLabel);
   c.add (glHint);
@@ -67,14 +78,20 @@ void setupGUI () {
   c.add (a2Hint);
   c.add (a3Label);
   c.add (a3Hint);
+  c.add (a4Label);
+  c.add (a4Hint);
   c.add (glText);
   c.add (a1Text);
   c.add (a2Text);
   c.add (a3Text);
+c.add (a4Text);
   c.add (submitButton);
   c.add (resetButton);
   c.add (playButton);
   c.add (pauseButton);
+   c.add (attractButton);
+  
+
   
 }
 
@@ -179,11 +196,19 @@ void actionPerformed (GUIEvent e) {
     stage2Attacks = int(a2Text.getValue());
     stage3Attacks= int(a3Text.getValue());
     calcAttack();
+    firstSubmit = true; 
   } 
 
 ///////////////////RESET///////////////////
     else if (e.getSource() == resetButton) {
     pressReset();
+  } 
+
+///////////////////ATRRACT///////////////////
+    else if (e.getSource() == attractButton) {
+    if (gameOn == false) {
+      attractOn = !attractOn;
+    }
   } 
 
 ///////////////////PLAY///////////////////
@@ -199,6 +224,7 @@ void actionPerformed (GUIEvent e) {
 }
 
 void pressPlay() {
+  if (firstSubmit == true) {
   state = GAME;
   restSong.pause();
   if (pauseOn == false) {
@@ -209,6 +235,8 @@ void pressPlay() {
     pauseOn= false;
   }
 chargeGauntletTimer.start();
+  }
+
 }
 
 
@@ -227,6 +255,7 @@ void pressReset() {
   tankWipe();
   tankColor("white", 255, 10);
   tankShow();
+ resetEverything();
   return;
 }
 
@@ -259,7 +288,11 @@ void checkAttack(){
         attacked[i] =false;
     }
     if (lastAttacked[i] != attacked[i]) {
-      warning.trigger();
+      //warning.trigger();  
+      if(!warning.isPlaying()){
+      warning.rewind();
+        warning.play();
+}
     }
     lastAttacked[i] = attacked[i];
   }

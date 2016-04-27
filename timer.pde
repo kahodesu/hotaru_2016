@@ -1,19 +1,21 @@
 
 int gameTime = 60000; //LENGTH OF GAME
 int fireTime = 50; 
+int fireTime2 = 50; 
 int flashTime = 20; 
 int flashTime2 = 20; 
 int gameOverTime = 60000;
-int depleteTankTime = 1750;
+int depleteTankTime = 2000;
 int fillGauntletTime = 2000;
 int shootPauseTime = 500;
 int chargeGauntletTime = 150;
 
 //TIME VARS
-Timer gameTimer, fireTimer, flashTimer, flashTimer2, gameOverTimer, depleteTankTimer, fillGauntletTimer, shootPauseTimer, chargeGauntletTimer; 
+Timer gameTimer, fireTimer,fireTimer2,  flashTimer, flashTimer2, gameOverTimer, depleteTankTimer, fillGauntletTimer, shootPauseTimer, chargeGauntletTimer; 
 
 void setUpTimer() {
   fireTimer = new Timer(fireTime);
+ fireTimer2 = new Timer(fireTime2);
   flashTimer = new Timer(flashTime);
 flashTimer2 = new Timer(flashTime2);
   gameOverTimer = new Timer(gameOverTime);
@@ -23,6 +25,7 @@ shootPauseTimer = new Timer(shootPauseTime);
 chargeGauntletTimer = new Timer(chargeGauntletTime);
 
   fireTimer.start();
+ fireTimer2.start();
   flashTimer.start();
  flashTimer2.start();
   depleteTankTimer.start();

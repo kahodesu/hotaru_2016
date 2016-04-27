@@ -73,7 +73,7 @@ void ELOff() {
   myMessage.add(0); 
   println(" myMessage ON: "+myMessage);
   oscP5.send(myMessage, tankLoc);//sends blob over
-  delay(20);
+  delay(50);
   myMessage = new OscMessage("/tank/outputs/digital/2"); //address pattern
   myMessage.add(1);   
   println(" myMessage OFF: "+myMessage);
