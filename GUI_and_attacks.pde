@@ -36,7 +36,7 @@ void setupGUI () {
  a4Text= new IFTextField("", width/3-50, 280, 45, "3");
 
   //glLabel, glHint, a1Label, a1Hint, a2Label, a2Hint, a3Label, a3Hint;
-  titleLabel = new IFLabel("-- HOTARU GAME SETTINGS --", width/2-75, 25);
+  titleLabel = new IFLabel("", width/2-75, 25);
   glLabel = new IFLabel("Game Length\n(seconds):", 50, 155);
   glHint = new IFLabel("* default 120", width/3, 155);
   a1Label = new IFLabel("Stage1 Attacks:", 50, 205);
@@ -48,11 +48,11 @@ void setupGUI () {
   a4Label = new IFLabel("Health Before\nDeath:", 50, 280);
   a4Hint = new IFLabel("* default 3", width/3, 280);
 
-  submitButton = new IFButton ("SUBMIT", width/3-50, 325, 100, 25);
-  resetButton = new IFButton ("RESET", width/2-50, 550, 100, 25);
+  submitButton = new IFButton ("SUBMIT", width/3-50, 325, 100, 20);
+  resetButton = new IFButton ("RESET", width/2-50, 550, 100, 20);
   playButton = new IFButton ("PLAY \n (space bar)", 2*width/5-50, 475, 100, 40);
   pauseButton = new IFButton ("PAUSE  \n  (space bar)", 3*width/5-50, 475, 100, 40);
-  attractButton = new IFButton ("ATTRACT", width/5, 75 , 100, 25);
+  attractButton = new IFButton ("ATTRACT MODE", width/2-125, 115 , 250, 20);
 
   submitButton.addActionListener(this);
   resetButton.addActionListener(this);
@@ -61,10 +61,10 @@ void setupGUI () {
   attractButton.addActionListener(this);
 
   defaultLook = new IFLookAndFeel(this, IFLookAndFeel.DEFAULT);
-  defaultLook.baseColor = color(178, 196, 222);
-  defaultLook.highlightColor = color(119, 136, 153);
+  defaultLook.baseColor = color(0, 225, 225);
+  defaultLook.highlightColor = color(32,178,170);
   defaultLook.activeColor = color(225, 30, 30);
-  defaultLook.borderColor = color(178, 196, 222);
+  defaultLook.borderColor = color(0, 225, 225);
 
   
   c.setLookAndFeel(defaultLook);
@@ -225,6 +225,7 @@ void actionPerformed (GUIEvent e) {
 
 void pressPlay() {
   if (firstSubmit == true) {
+attractOn = false; 
   state = GAME;
   restSong.pause();
   if (pauseOn == false) {

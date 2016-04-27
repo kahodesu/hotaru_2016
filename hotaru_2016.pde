@@ -29,13 +29,14 @@ int health = 0;
 int success = 0;
 int counterDepleteFast =0;
 
-PImage img, img2;
+PImage img, img2, logo;
 
 void setup() {
   size(600, 600);
   resetEverything();
 }
 void draw() {
+
   //println("  prox: " + proxVal);
   /////////////////////GUI shit///////////////////
   if (attractOn == true) {
@@ -47,8 +48,9 @@ void draw() {
     gauntletShow();
   }
   else {
-    background(255);
+    background(225);
   }
+   image(logo, 0, 0);
   drawLine();
   drawAttacks();
   //println(health + "---"+ success);
@@ -240,4 +242,5 @@ void resetEverything() {
   hurt = 0;
   img = loadImage("attractmode.png");
   img2 = loadImage("submitfirst.png");
+logo = loadImage("logo.png");
 }
