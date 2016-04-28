@@ -103,8 +103,6 @@ void gauntletColor(String colorName, int brightness, int neopixels) {
       fireTimer2.start();
     }
   }
-
-
 }
 
 void gauntletWipe() {
