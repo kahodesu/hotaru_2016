@@ -24,10 +24,17 @@ int proxVal = 0;
 boolean shootOn = false;
 boolean sweetSpot = false;
 boolean lastSweetSpot = false;
-
+boolean tankDucked = false;
+int lastTankIMUz;
+boolean alarmRedOn = false;
+boolean tankOnce = false;
 int health = 0;
+int overallHealth = 100;
+int totalHealth = 0;
 int success = 0;
 int counterDepleteFast =0;
+
+
 
 PImage img, img2, logo;
 
@@ -36,7 +43,7 @@ void setup() {
   resetEverything();
 }
 void draw() {
-
+checkHealth();
   //println("  prox: " + proxVal);
   /////////////////////GUI shit///////////////////
   if (attractOn == true) {
@@ -54,7 +61,7 @@ void draw() {
   drawLine();
   drawAttacks();
   //println(health + "---"+ success);
-  println("state: " + state +"  tankLevel: "+tankLevel+"  proxVal: "+ proxVal +"  handsHolding: " + handsHolding);
+  //println("state: " + state +"  tankLevel: "+tankLevel+"  proxVal: "+ proxVal +"  handsHolding: " + handsHolding);
   //println();
 
 
@@ -93,14 +100,21 @@ void draw() {
 
     if (warning.isPlaying()) {
 
-      tankColor("fire", 255, 10);
+      tankColor("alarm", 255, 10);
       tankShow();
-      gauntletColor("fire", 255, 28);
+      gauntletColor("alarm", 255, 28);
       gauntletShow();
       if (gauntletIMUx<40 && gauntletIMUx>-10 && gauntletIMUy<0 && gauntletIMUz<0) {
         health++;
+        tankDuckCheck();
       }
     } else {
+      if (tankDucked == true) {
+        overallHealth = overallHealth+ health;
+        tankDucked = false;
+        tankOnce = false;
+        health =0;
+      }
       gauntletColor("white", 255, gauntletLevel);
       gauntletShow();
       tankColor("white", 255, tankLevel);
@@ -153,7 +167,7 @@ void draw() {
   else if (state == GAMEOVER) {
     gameSong.pause();
     restSong.pause();
-    if (health > minHealth && success > minSuccess) {
+    if (overallHealth>500) {
       gauntletColor("flash", 255, 28);
       gauntletShow();
       tankColor("flash", 255, 10);
@@ -183,7 +197,11 @@ void draw() {
 
 
 void checkTank() {
-  println(sweetSpot);
+  
+
+
+
+//  println(sweetSpot);
   if (proxVal >50 && proxVal <80) {
 
     sweetSpot = true;
@@ -208,6 +226,7 @@ void checkTank() {
 
 
   lastSweetSpot = sweetSpot;
+  
 }
 
 void depleteTank() {
@@ -243,4 +262,16 @@ void resetEverything() {
   img = loadImage("attractmode.png");
   img2 = loadImage("submitfirst.png");
 logo = loadImage("logo.png");
+  overallHealth = 100;
+  totalHealth = overallHealth;
+tankDucked = false;
+}
+
+void tankDuckCheck(){
+if ((tankIMUz-lastTankIMUz)>10 && tankOnce == false){
+  tankDucked = true;
+  println("*********DUCKED!!********");
+  tankOnce = true;
+}
+ lastTankIMUz = tankIMUz;
 }

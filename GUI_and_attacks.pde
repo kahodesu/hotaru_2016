@@ -153,7 +153,7 @@ void drawAttacks() {
 void drawCursor() {  
   if (gameOn && pauseOn == false) {
     currentTime = millis()-startTime;
-    println(currentTime/float(1000) + "," + gameLength);
+  //  println(currentTime/float(1000) + "," + gameLength);
     cursorPoint = 50+(currentTime/float(1000)*((width-100)/gameLength));
     stroke(0);
     fill(255);
@@ -289,12 +289,19 @@ void checkAttack(){
         attacked[i] =false;
     }
     if (lastAttacked[i] != attacked[i]) {
-      //warning.trigger();  
+      //warning.trigger(); 
+      overallHealth =  overallHealth - int(float(totalHealth)/ float(attackTimes.length));
       if(!warning.isPlaying()){
       warning.rewind();
         warning.play();
+        overallHealth = overallHealth - 10;
 }
     }
     lastAttacked[i] = attacked[i];
   }
+}
+
+void checkHealth() {
+    println("overallHealth: "+overallHealth);
+   
 }

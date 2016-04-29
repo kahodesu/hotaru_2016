@@ -103,6 +103,14 @@ void gauntletColor(String colorName, int brightness, int neopixels) {
       fireTimer2.start();
     }
   }
+
+else if (colorName == "alarm") {
+    if (alarmRedOn == true) {
+      gauntletColor("red", brightness, neopixels);
+    } else {
+      gauntletWipe();
+    }
+  }
 }
 
 void gauntletWipe() {

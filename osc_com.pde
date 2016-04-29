@@ -9,7 +9,9 @@ NetAddress gauntletLoc;//GAUNTLET location
 
 boolean handsHolding = false;
 float[] gauntletIMU = new float[10];
+float[] tankIMU = new float[10];
 int gauntletIMUx, gauntletIMUy, gauntletIMUz;
+int tankIMUx, tankIMUy, tankIMUz;
 //////////////FUNCTIONS////////////////
 void setupOSC() {
   oscP5 = new OscP5(this, 8000);
@@ -27,8 +29,8 @@ void oscEvent(OscMessage theOscMessage) {
   String addrPattern = theOscMessage.addrPattern();
   //println(addrPattern);
   if (addrPattern.equals("/tank/inputs/analogue")) {
-     proxVal = int(100*(theOscMessage.get(2).floatValue())); //
-   // println("prox: "+proxVal);
+    proxVal = int(100*(theOscMessage.get(2).floatValue())); //
+    // println("prox: "+proxVal);
   }
 
   //handsholding switch: 1 hands holding starts, 0 hands holding ends! 
@@ -41,14 +43,24 @@ void oscEvent(OscMessage theOscMessage) {
   }
 
 
-if (addrPattern.equals("/gauntlet/imu")) {
+  if (addrPattern.equals("/gauntlet/imu")) {
     for (int i = 0; i < gauntletIMU.length; i ++) {
       gauntletIMU[i] = theOscMessage.get(i).floatValue();
     }
     gauntletIMUx = int(gauntletIMU[3]*100);
     gauntletIMUy = int(gauntletIMU[4]*100);
     gauntletIMUz = int(gauntletIMU[5]*100);
- println("gauntletIMU: "+ gauntletIMUx +", "+ gauntletIMUy +", "+ gauntletIMUz);
+  //  println("gauntletIMU: "+ gauntletIMUx +", "+ gauntletIMUy +", "+ gauntletIMUz);
+  }
+
+if (addrPattern.equals("/tank/imu")) {
+    for (int i = 0; i < tankIMU.length; i ++) {
+      tankIMU[i] = theOscMessage.get(i).floatValue();
+    }
+    tankIMUx = int(tankIMU[3]*100);
+    tankIMUy = int(tankIMU[4]*100);
+    tankIMUz = int(tankIMU[5]*100);
+  //  println("tankIMU: "+ tankIMUx +", "+ tankIMUy +", "+ tankIMUz);
   }
 } 
 //////////////////SENDING NEOPIXEL/EL WIRE COMMANDS////////////////////////////////
@@ -99,5 +111,4 @@ void ELOn() {
   myMessage.add(0); 
   println(" myMessage ON: "+myMessage);
   oscP5.send(myMessage, tankLoc);//sends blob over
-  
 }
