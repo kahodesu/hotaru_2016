@@ -16,7 +16,7 @@ int tankIMUx, tankIMUy, tankIMUz;
 void setupOSC() {
   oscP5 = new OscP5(this, 8000);
   tankLoc = new NetAddress("169.254.1.1", 9000);
-  gauntletLoc = new NetAddress("169.254.1.2", 9000);
+  gauntletLoc = new NetAddress("169.254.1.2", 9001);
 
   //sets up holding hands switch on gauntlet
   OscMessage myMessage = new OscMessage("/gauntlet/inputs/mode/digital/8"); //address pattern
@@ -50,7 +50,7 @@ void oscEvent(OscMessage theOscMessage) {
     gauntletIMUx = int(gauntletIMU[3]*100);
     gauntletIMUy = int(gauntletIMU[4]*100);
     gauntletIMUz = int(gauntletIMU[5]*100);
- //  println("gauntletIMU: "+ gauntletIMUx +", "+ gauntletIMUy +", "+ gauntletIMUz);
+  //println("gauntletIMU: "+ gauntletIMUx +", "+ gauntletIMUy +", "+ gauntletIMUz);
   }
 
 if (addrPattern.equals("/tank/imu")) {
@@ -60,7 +60,7 @@ if (addrPattern.equals("/tank/imu")) {
     tankIMUx = int(tankIMU[3]*100);
     tankIMUy = int(tankIMU[4]*100);
     tankIMUz = int(tankIMU[5]*100);
-  //  println("tankIMU: "+ tankIMUx +", "+ tankIMUy +", "+ tankIMUz);
+  // println("tankIMU: "+ tankIMUx +", "+ tankIMUy +", "+ tankIMUz);
   }
 } 
 //////////////////SENDING NEOPIXEL/EL WIRE COMMANDS////////////////////////////////

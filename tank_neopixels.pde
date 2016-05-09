@@ -65,10 +65,9 @@ void tankColor(String colorName, int brightness, int levels) {
     //the first 3 for 3 neopixels per level, second 3 for r, g, b. 
     // tankWipe();
     for (int i=0; i<numOfPixels; i=i+3) {
-      tankBlob[i] = byte(brightness);
-      tankBlob[i+1] = byte(brightness);
-      tankBlob[i+2] = byte(0);
-    }
+      tankBlob[i] = byte(0);
+      tankBlob[i+1] = byte(.05* brightness);
+      tankBlob[i+2] = byte(.05* brightness);;   }
     //the rest is off
     for (int i = numOfPixels; i<90; i=i+3) {
       tankBlob[i] = byte(0);

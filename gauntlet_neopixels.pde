@@ -62,9 +62,9 @@ void gauntletColor(String colorName, int brightness, int neopixels) {
     //the first 3 for 3 neopixels per level, second 3 for r, g, b. 
 
     for (int i=0; i<neopixels * 3; i=i+3) {
-      gauntletBlob[i] = byte(brightness);
-      gauntletBlob[i+1] = byte(brightness);
-      gauntletBlob[i+2] = byte(0);
+      gauntletBlob[i] = byte(0);
+      gauntletBlob[i+1] = byte(.5 * brightness);
+      gauntletBlob[i+2] = byte(.5 *brightness);
     }
     for (int i = neopixels * 3; i<84; i=i+3) {
       gauntletBlob[i] = byte(0);

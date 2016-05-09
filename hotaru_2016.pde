@@ -1,5 +1,4 @@
 //TODO
-// add new defense mechanic for tank person too. 
 // think of analog gameplay
 // feedback for successfully defending - animation on lights? 
 // health points, deterioting when defending badly 
@@ -24,13 +23,12 @@ int proxVal = 0;
 boolean shootOn = false;
 boolean sweetSpot = false;
 boolean lastSweetSpot = false;
-boolean tankDucked = false;
+
+
 int lastTankIMUz;
 boolean alarmRedOn = false;
-boolean tankOnce = false;
-int health = 0;
-int overallHealth = 100;
-int totalHealth = 0;
+boolean tankDuckOnce = false;
+float health = 0;
 int success = 0;
 int counterDepleteFast =0;
 
@@ -48,8 +46,9 @@ void setup() {
 
 
 void draw() {
-  checkHealth();
-  
+ checkHealth();
+  //tankDuckCheck();
+
   //println("  prox: " + proxVal);
   /////////////////////ATTRACT MODE SHIT///////////////////
   if (attractOn) {
@@ -69,7 +68,7 @@ void draw() {
   drawAttacks();
 
   
-  //println("state: " + state +"  tankLevel: "+tankLevel+"  proxVal: "+ proxVal +"  handsHolding: " + handsHolding);
+println("state: " + state +"  tankLevel: "+tankLevel+"  proxVal: "+ proxVal +"  handsHolding: " + handsHolding);
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -86,6 +85,10 @@ void draw() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   else if (state == GAME) {
+   if (health <=0 ) {
+         gameOverTimer.start();
+          state = GAMEOVER;
+        }
     restSong.pause();
     gameOverSong.pause();
     drawCursor();
@@ -103,25 +106,26 @@ void draw() {
     ////////////ATTACK STUFF/////////////
 
     if (warning.isPlaying()) {
-      tankColor("alarm", 255, 10);
-      gauntletColor("alarm", 255, 28);
-      if (gauntletIMUx<40 && gauntletIMUx>-10 && gauntletIMUy<0 && gauntletIMUz<0) {
-        health++;
-        tankDuckCheck();
+      tankDuckCheck();
+      if ( gauntletIMUy<-40 && gauntletIMUy>-70 && gauntletIMUz<-50 &&gauntletIMUz>-90) {
+        health= health +.25; 
+         tankColor("teal", 255, 10);
+          gauntletColor("teal", 255, 28); 
+      } 
+      else {
+        tankColor("alarm", 255, 10);
+        gauntletColor("alarm", 255, 28);
       }
     } 
 
     else {
-      if (tankDucked == true) {
-        overallHealth = overallHealth+ health;
-        tankDucked = false;
-        tankOnce = false;
-        health =0;
+      if (tankDuckOnce == true) {
+        tankDuckOnce = false;
+        health = health +5;
+      
       }
       gauntletColor("white", 255, gauntletLevel);
-      gauntletShow();
       tankColor("white", 255, tankLevel);
-      tankShow();
     }
 
     ////////////CHARGING STUFF/////////////
@@ -147,7 +151,7 @@ void draw() {
 
     ////////////SHOOTING STUFF/////////////
   
-    if (gauntletLevel >27 && handsHolding == false && gauntletIMUx > 70  && gauntletIMUx<100 && gauntletIMUy<0 && gauntletIMUz <0) {
+    if (gauntletLevel >27 && handsHolding == false && gauntletIMUx > 70  && gauntletIMUx<100 && gauntletIMUz <0) {
       if (shootOn == false ) {
         shootOn = true;
         power.pause();
@@ -159,6 +163,7 @@ void draw() {
         delay(1000); 
         gauntletLevel =0;
         shootOn = false;
+        attackStrength = attackStrength * .5;
       }
     }
 
@@ -170,7 +175,7 @@ void draw() {
   else if (state == GAMEOVER) {
     gameSong.pause();
     restSong.pause();
-    if (overallHealth>500) {
+    if (health>0) {
       gauntletColor("flash", 255, 28);
       tankColor("flash", 255, 10);
     } else {
@@ -201,26 +206,22 @@ void resetEverything() {
   gameOverSong.rewind();
   restSong.pause();
   restSong.rewind();
-
+  handsHolding = false;
   setUpTimer();
 
   gauntletWipe();
   tankWipe();
   ELOff();
-
+health = startingHealth; 
   success=0;
-  health = 0;
   hurt = 0;
-  
-
-  overallHealth = 100;
-  totalHealth = overallHealth;
-  tankDucked = false;
+ 
+  tankDuckOnce = false;
 }
 
 void checkTank() {
 //  println(sweetSpot);
-  if (proxVal >50 && proxVal <80) {
+  if (proxVal >80) {
 
     sweetSpot = true;
   } else {
@@ -229,7 +230,7 @@ void checkTank() {
   if (sweetSpot == true && lastSweetSpot == true) {
     sweetSpotCounter++;
   }
-  if (sweetSpotCounter >20 && sweetSpot == false && lastSweetSpot == false) {
+  if (sweetSpotCounter >10 && sweetSpot == false && lastSweetSpot == false) {
     tankLevel++;
     ELOn();
     if (!charge.isPlaying()) {
@@ -266,10 +267,13 @@ void depleteFast() {
 
 
 void tankDuckCheck(){
-if ((tankIMUz-lastTankIMUz)>10 && tankOnce == false){
-  tankDucked = true;
-  println("*********DUCKED!!********");
-  tankOnce = true;
+//if ((tankIMUz-lastTankIMUz)<-40){
+//println("++++++++++DUCKED+++++++");
+//}
+
+if ((tankIMUz-lastTankIMUz)<-40 && tankDuckOnce == false ){
+ println("*********DUCKED!!********");
+  tankDuckOnce = true;
 }
  lastTankIMUz = tankIMUz;
 }

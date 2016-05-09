@@ -8,6 +8,8 @@ IFTextField glText, a1Text, a2Text, a3Text, a4Text;
 IFLabel titleLabel, glLabel, glHint, a1Label, a1Hint, a2Label, a2Hint, a3Label, a3Hint, a4Label, a4Hint ;
 IFButton submitButton, resetButton, playButton, pauseButton, attractButton;
 
+
+float attackStrength = 3.5;
 int gameLength= 60;
 float currentTime = 0;
 float cursorPoint = 0;
@@ -22,7 +24,7 @@ boolean[] attacked = new boolean[0];
 boolean[] lastAttacked = new boolean[0];
 boolean attractOn = false;
 boolean firstSubmit = false; 
-int healthBeforeDeath = 3; 
+float startingHealth; 
 //////////////FUNCTIONS////////////////
 void setupGUI () {
 
@@ -37,7 +39,7 @@ void setupGUI () {
   a1Text= new IFTextField("", width/3-50, 200, 45, "0");
   a2Text= new IFTextField("", width/3-50, 225, 45, "2");
   a3Text= new IFTextField("", width/3-50, 250, 45, "3");
-  a4Text= new IFTextField("", width/3-50, 280, 45, "3");
+  a4Text= new IFTextField("", width/3-50, 280, 45, "100");
 
   //glLabel, glHint, a1Label, a1Hint, a2Label, a2Hint, a3Label, a3Hint;
   titleLabel = new IFLabel("", width/2-75, 25);
@@ -49,8 +51,8 @@ void setupGUI () {
   a2Hint = new IFLabel("* default 2", width/3, 230);
   a3Label = new IFLabel("Stage3 Attacks:", 50, 255);
   a3Hint = new IFLabel("* default 3", width/3, 255);
-  a4Label = new IFLabel("Health Before\nDeath:", 50, 280);
-  a4Hint = new IFLabel("* default 3", width/3, 280);
+  a4Label = new IFLabel("Starting Health:", 50, 280);
+  a4Hint = new IFLabel("* default 100", width/3, 280);
 
   submitButton = new IFButton ("SUBMIT", width/3-50, 325, 100, 20);
   resetButton = new IFButton ("RESET", width/2-50, 550, 100, 20);
@@ -194,6 +196,8 @@ void actionPerformed (GUIEvent e) {
     stage3Attacks= int(a3Text.getValue());
     calcAttack();
     firstSubmit = true;
+    startingHealth =  float(a4Text.getValue());
+    health = startingHealth; 
   } 
 
   ///////////////////RESET///////////////////
@@ -222,6 +226,7 @@ void pressPlay() {
   if (firstSubmit == true) {
     attractOn = false; 
     state = GAME;
+    tankLevel = 10;
     if (pauseOn == false) {
       startTime = millis();
       gameOn = true;
@@ -275,11 +280,10 @@ void checkAttack() {
     }
     if (lastAttacked[i] != attacked[i]) {
       //warning.trigger(); 
-      overallHealth =  overallHealth - int(float(totalHealth)/ float(attackTimes.length));
+      health =  health - int(attackStrength * (startingHealth/ float(attackTimes.length)));
       if (!warning.isPlaying()) {
         warning.rewind();
         warning.play();
-        overallHealth = overallHealth - 10;
       }
     }
     lastAttacked[i] = attacked[i];
@@ -287,5 +291,5 @@ void checkAttack() {
 }
 
 void checkHealth() {
-  println("overallHealth: "+overallHealth);
+  println("health: "+health +"    attackStrength: "+ attackStrength);
 }
