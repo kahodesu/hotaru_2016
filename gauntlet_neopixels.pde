@@ -19,7 +19,8 @@ void gauntletColor(String colorName, int brightness, int neopixels) {
       gauntletBlob[i] = byte(0);
       gauntletBlob[i+1] = byte(0);
       gauntletBlob[i+2] = byte(0);
-    }  
+    }
+  gauntletShow();
   }
   //--------------------------------------------------------------------
   else if (colorName == "blue") {
@@ -35,6 +36,7 @@ void gauntletColor(String colorName, int brightness, int neopixels) {
       gauntletBlob[i+1] = byte(0);
       gauntletBlob[i+2] = byte(0);
     }
+  gauntletShow();
   }
   //--------------------------------------------------------------------
   else if (colorName == "white") {
@@ -52,6 +54,7 @@ void gauntletColor(String colorName, int brightness, int neopixels) {
       gauntletBlob[i+1] = byte(0);
       gauntletBlob[i+2] = byte(0);
     }
+  gauntletShow();
   }
   //--------------------------------------------------------------------
   else if (colorName == "teal") {
@@ -68,6 +71,7 @@ void gauntletColor(String colorName, int brightness, int neopixels) {
       gauntletBlob[i+1] = byte(0);
       gauntletBlob[i+2] = byte(0);
     }
+  gauntletShow();
   } 
 
   else if (colorName == "flash") {
@@ -83,6 +87,7 @@ void gauntletColor(String colorName, int brightness, int neopixels) {
       }
       flashTimer.start();
     }
+  gauntletShow();
   }
 
   else if (colorName == "fire") {
@@ -102,6 +107,7 @@ void gauntletColor(String colorName, int brightness, int neopixels) {
       }
       fireTimer2.start();
     }
+  gauntletShow();
   }
 
 else if (colorName == "alarm") {

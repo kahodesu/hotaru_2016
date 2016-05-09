@@ -50,7 +50,7 @@ void oscEvent(OscMessage theOscMessage) {
     gauntletIMUx = int(gauntletIMU[3]*100);
     gauntletIMUy = int(gauntletIMU[4]*100);
     gauntletIMUz = int(gauntletIMU[5]*100);
-  //  println("gauntletIMU: "+ gauntletIMUx +", "+ gauntletIMUy +", "+ gauntletIMUz);
+ //  println("gauntletIMU: "+ gauntletIMUx +", "+ gauntletIMUy +", "+ gauntletIMUz);
   }
 
 if (addrPattern.equals("/tank/imu")) {

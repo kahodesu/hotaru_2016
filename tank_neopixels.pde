@@ -22,6 +22,7 @@ void tankColor(String colorName, int brightness, int levels) {
       tankBlob[i+1] = byte(0);
       tankBlob[i+2] = byte(0);
     }
+  tankShow();
   }
   //--------------------------------------------------------------------
   else if (colorName == "blue") {
@@ -38,6 +39,7 @@ void tankColor(String colorName, int brightness, int levels) {
       tankBlob[i+1] = byte(0);
       tankBlob[i+2] = byte(0);
     }
+  tankShow();
   }
   //--------------------------------------------------------------------
   else if (colorName == "white") {
@@ -55,6 +57,7 @@ void tankColor(String colorName, int brightness, int levels) {
       tankBlob[i+1] = byte(0);
       tankBlob[i+2] = byte(0);
     }
+  tankShow();
   }
   //--------------------------------------------------------------------
   else if (colorName == "teal") {
@@ -72,7 +75,10 @@ void tankColor(String colorName, int brightness, int levels) {
       tankBlob[i+1] = byte(0);
       tankBlob[i+2] = byte(0);
     }
-  } else if (colorName == "flash") {
+  tankShow();
+  } 
+
+  else if (colorName == "flash") {
     if (flashTimer2.isFinished()==true) {
       tankWipe();
       //println("random");
@@ -85,7 +91,10 @@ void tankColor(String colorName, int brightness, int levels) {
       }
       flashTimer2.start();
     }
-  } else if (colorName == "fire") {
+  tankShow();
+  } 
+   
+  else if (colorName == "fire") {
     if (fireTimer.isFinished()==true) {
       tankColor("red", brightness, levels);
       //println("random");
@@ -98,6 +107,7 @@ void tankColor(String colorName, int brightness, int levels) {
       }
       fireTimer.start();
     }
+  tankShow();
   } 
 
   else if (colorName == "alarm") {

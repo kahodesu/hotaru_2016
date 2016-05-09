@@ -26,6 +26,10 @@ int healthBeforeDeath = 3;
 //////////////FUNCTIONS////////////////
 void setupGUI () {
 
+  img = loadImage("attractmode.png");
+  img2 = loadImage("submitfirst.png");
+  logo = loadImage("logo.png");
+
   c = new GUIController(this);
 
   //glText, a1Text, a2Text, a3Text
@@ -33,7 +37,7 @@ void setupGUI () {
   a1Text= new IFTextField("", width/3-50, 200, 45, "0");
   a2Text= new IFTextField("", width/3-50, 225, 45, "2");
   a3Text= new IFTextField("", width/3-50, 250, 45, "3");
- a4Text= new IFTextField("", width/3-50, 280, 45, "3");
+  a4Text= new IFTextField("", width/3-50, 280, 45, "3");
 
   //glLabel, glHint, a1Label, a1Hint, a2Label, a2Hint, a3Label, a3Hint;
   titleLabel = new IFLabel("", width/2-75, 25);
@@ -52,7 +56,7 @@ void setupGUI () {
   resetButton = new IFButton ("RESET", width/2-50, 550, 100, 20);
   playButton = new IFButton ("PLAY \n (space bar)", 2*width/5-50, 475, 100, 40);
   pauseButton = new IFButton ("PAUSE  \n  (space bar)", 3*width/5-50, 475, 100, 40);
-  attractButton = new IFButton ("ATTRACT MODE", width/2-125, 115 , 250, 20);
+  attractButton = new IFButton ("ATTRACT MODE", width/2-125, 115, 250, 20);
 
   submitButton.addActionListener(this);
   resetButton.addActionListener(this);
@@ -62,11 +66,11 @@ void setupGUI () {
 
   defaultLook = new IFLookAndFeel(this, IFLookAndFeel.DEFAULT);
   defaultLook.baseColor = color(0, 225, 225);
-  defaultLook.highlightColor = color(32,178,170);
+  defaultLook.highlightColor = color(32, 178, 170);
   defaultLook.activeColor = color(225, 30, 30);
   defaultLook.borderColor = color(0, 225, 225);
 
-  
+
   c.setLookAndFeel(defaultLook);
 
   c.add (titleLabel);
@@ -84,15 +88,12 @@ void setupGUI () {
   c.add (a1Text);
   c.add (a2Text);
   c.add (a3Text);
-c.add (a4Text);
+  c.add (a4Text);
   c.add (submitButton);
   c.add (resetButton);
   c.add (playButton);
   c.add (pauseButton);
-   c.add (attractButton);
-  
-
-  
+  c.add (attractButton);
 }
 
 void drawLine() {
@@ -153,7 +154,7 @@ void drawAttacks() {
 void drawCursor() {  
   if (gameOn && pauseOn == false) {
     currentTime = millis()-startTime;
-  //  println(currentTime/float(1000) + "," + gameLength);
+    //  println(currentTime/float(1000) + "," + gameLength);
     cursorPoint = 50+(currentTime/float(1000)*((width-100)/gameLength));
     stroke(0);
     fill(255);
@@ -165,30 +166,26 @@ void drawCursor() {
     cursorPoint = 50;
     stroke(0);
     fill(0);
-  
   }
   triangle(cursorPoint, 390, cursorPoint-5, 380, cursorPoint+5, 380);
-  if(currentTime/float(1000) > gameLength) {
+
   //////////////////END OF GAME /////////////////////////
-    gameOverTimer.start();
-  
+  if (currentTime/float(1000) > gameLength) {
+    gameOverTimer.start(); 
     println("############################");
-println("############################");
-println("############################");
+    println("######### GAME OVER ########");
+    println("############################");
     state = GAMEOVER; 
-  
+
     //currentTime = 0;
     //this is where you will show the results for a few secounds then.... reset
-
   }
-
- 
 }
 
 void actionPerformed (GUIEvent e) {
 
-///////////////////SUBMIT///////////////////
-  if (e.getSource() == submitButton) {
+  ///////////////////SUBMIT///////////////////
+  if (e.getSource() == submitButton && gameOn == false) {
     println("--SUBMIT--");
     println(glText.getValue());
     gameLength =int(glText.getValue());
@@ -196,27 +193,25 @@ void actionPerformed (GUIEvent e) {
     stage2Attacks = int(a2Text.getValue());
     stage3Attacks= int(a3Text.getValue());
     calcAttack();
-    firstSubmit = true; 
+    firstSubmit = true;
   } 
 
-///////////////////RESET///////////////////
-    else if (e.getSource() == resetButton) {
+  ///////////////////RESET///////////////////
+  else if (e.getSource() == resetButton) {
     pressReset();
   } 
 
-///////////////////ATRRACT///////////////////
-    else if (e.getSource() == attractButton) {
-    if (gameOn == false) {
-      attractOn = !attractOn;
-    }
+  ///////////////////ATRRACT///////////////////
+  else if (e.getSource() == attractButton && gameOn == false) {  
+    attractOn = !attractOn;
   } 
 
-///////////////////PLAY///////////////////
+  ///////////////////PLAY///////////////////
   else if (e.getSource() == playButton) {
     pressPlay();
   } 
 
-///////////////////PAUSE///////////////////
+  ///////////////////PAUSE///////////////////
   else if (e.getSource() == pauseButton) {
     pressPause();
   }
@@ -225,38 +220,29 @@ void actionPerformed (GUIEvent e) {
 
 void pressPlay() {
   if (firstSubmit == true) {
-attractOn = false; 
-  state = GAME;
-  restSong.pause();
-  if (pauseOn == false) {
-    startTime = millis();
-    gameOn = true;
-  } else {
-    startTime = startTime + (millis()- pauseTime);
-    pauseOn= false;
+    attractOn = false; 
+    state = GAME;
+    if (pauseOn == false) {
+      startTime = millis();
+      gameOn = true;
+    } 
+    else {
+      startTime = startTime + (millis()- pauseTime);
+      pauseOn= false;
+    }
+    chargeGauntletTimer.start();
   }
-chargeGauntletTimer.start();
-  }
-
 }
 
 
 void pressReset() {
-    gameOn = false;
-    pauseOn= false;
-    gameSong.pause();
-    gameSong.rewind();
-    gameOverSong.pause();
-    gameOverSong.rewind();
-    restSong.pause();
-    restSong.rewind();
-   state = REST;
-   println("--RESET--");
- gauntletWipe();
-  tankWipe();
-  tankColor("white", 255, 10);
-  tankShow();
- resetEverything();
+  state = REST;
+  gameOn = false;
+  pauseOn= false;
+
+  println("--RESET--");
+
+  resetEverything();
   return;
 }
 
@@ -280,28 +266,26 @@ void keyPressed() {
   }
 }
 
-void checkAttack(){
-   for (int i=0; i < totalAttacks; i++){
+void checkAttack() {
+  for (int i=0; i < totalAttacks; i++) {
     if (currentTime/float(1000) > attackTimes[i]) {
-        attacked[i] = true;
-    }
-    else {
-        attacked[i] =false;
+      attacked[i] = true;
+    } else {
+      attacked[i] =false;
     }
     if (lastAttacked[i] != attacked[i]) {
       //warning.trigger(); 
       overallHealth =  overallHealth - int(float(totalHealth)/ float(attackTimes.length));
-      if(!warning.isPlaying()){
-      warning.rewind();
+      if (!warning.isPlaying()) {
+        warning.rewind();
         warning.play();
         overallHealth = overallHealth - 10;
-}
+      }
     }
     lastAttacked[i] = attacked[i];
   }
 }
 
 void checkHealth() {
-    println("overallHealth: "+overallHealth);
-   
+  println("overallHealth: "+overallHealth);
 }

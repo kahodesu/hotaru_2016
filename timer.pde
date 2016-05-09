@@ -12,29 +12,29 @@ int chargeGauntletTime = 150;
 int alarmTime = 250;
 
 //TIME VARS
-Timer gameTimer, fireTimer,fireTimer2,  flashTimer, 
-flashTimer2, gameOverTimer, depleteTankTimer, fillGauntletTimer, 
-shootPauseTimer, chargeGauntletTimer, alarmTimer; 
+Timer gameTimer, fireTimer, fireTimer2, flashTimer, 
+  flashTimer2, gameOverTimer, depleteTankTimer, fillGauntletTimer, 
+  shootPauseTimer, chargeGauntletTimer, alarmTimer; 
 
 void setUpTimer() {
   fireTimer = new Timer(fireTime);
- alarmTimer = new Timer(alarmTime);
- fireTimer2 = new Timer(fireTime2);
+  alarmTimer = new Timer(alarmTime);
+  fireTimer2 = new Timer(fireTime2);
   flashTimer = new Timer(flashTime);
-flashTimer2 = new Timer(flashTime2);
+  flashTimer2 = new Timer(flashTime2);
   gameOverTimer = new Timer(gameOverTime);
-depleteTankTimer = new Timer(depleteTankTime);
-fillGauntletTimer = new Timer(fillGauntletTime);
-shootPauseTimer = new Timer(shootPauseTime);
-chargeGauntletTimer = new Timer(chargeGauntletTime);
+  depleteTankTimer = new Timer(depleteTankTime);
+  fillGauntletTimer = new Timer(fillGauntletTime);
+  shootPauseTimer = new Timer(shootPauseTime);
+  chargeGauntletTimer = new Timer(chargeGauntletTime);
 
   fireTimer.start();
- fireTimer2.start();
+  fireTimer2.start();
   flashTimer.start();
- flashTimer2.start();
+  flashTimer2.start();
   depleteTankTimer.start();
   fillGauntletTimer.start();
-alarmTimer.start();
+  alarmTimer.start();
 }
 
 //////////////////////////////////////////////////////////
@@ -44,18 +44,18 @@ alarmTimer.start();
 // Example 10-5: Object-oriented timer
 
 class Timer {
- 
+
   int savedTime; 
   int totalTime; 
-  
+
   Timer(int tempTotalTime) {
     totalTime = tempTotalTime;
   }
-  
+
   void start() {
-    savedTime = millis(); 
+    savedTime = millis();
   }
-  
+
   boolean isFinished() { 
     int passedTime = millis()- savedTime;
     if (passedTime > totalTime) {

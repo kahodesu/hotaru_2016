@@ -40,32 +40,36 @@ PImage img, img2, logo;
 
 void setup() {
   size(600, 600);
+  setupSound();
+  setupGUI();
+    setupOSC();
   resetEverything();
 }
+
+
 void draw() {
-checkHealth();
+  checkHealth();
+  
   //println("  prox: " + proxVal);
-  /////////////////////GUI shit///////////////////
-  if (attractOn == true) {
-    
+  /////////////////////ATTRACT MODE SHIT///////////////////
+  if (attractOn) {
+    gameOn = false;
     image(img, 0, 0);
     gauntletColor("flash", 150, 28);
     tankColor("flash", 150, 10);
-    tankShow();
-    gauntletShow();
   }
+  
   else {
     background(225);
   }
-   image(logo, 0, 0);
+   
+  //ALWAYS DRAW THE LOGO, LINE AND ATTACKS IF THERE ARE ANY
+  image(logo, 0, 0);
   drawLine();
   drawAttacks();
-  //println(health + "---"+ success);
+
+  
   //println("state: " + state +"  tankLevel: "+tankLevel+"  proxVal: "+ proxVal +"  handsHolding: " + handsHolding);
-  //println();
-
-
-
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -78,8 +82,8 @@ checkHealth();
     drawCursor();
   } 
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   else if (state == GAME) {
     restSong.pause();
@@ -96,19 +100,18 @@ checkHealth();
     checkTank();
     depleteTank();
 
-    ////////////GAUNTLET STUFF/////////////
+    ////////////ATTACK STUFF/////////////
 
     if (warning.isPlaying()) {
-
       tankColor("alarm", 255, 10);
-      tankShow();
       gauntletColor("alarm", 255, 28);
-      gauntletShow();
       if (gauntletIMUx<40 && gauntletIMUx>-10 && gauntletIMUy<0 && gauntletIMUz<0) {
         health++;
         tankDuckCheck();
       }
-    } else {
+    } 
+
+    else {
       if (tankDucked == true) {
         overallHealth = overallHealth+ health;
         tankDucked = false;
@@ -121,7 +124,8 @@ checkHealth();
       tankShow();
     }
 
-
+    ////////////CHARGING STUFF/////////////
+  
     if (tankLevel >0 && handsHolding == true && gauntletIMUx<0 && gauntletIMUz<0) {
       depleteFast();
 
@@ -140,24 +144,23 @@ checkHealth();
         gauntletLevel = 0;
       }
     }
-    if (gauntletLevel >25 && handsHolding == false && gauntletIMUx > 70  && gauntletIMUx<100 && gauntletIMUy<0 && gauntletIMUz <0) {
+
+    ////////////SHOOTING STUFF/////////////
+  
+    if (gauntletLevel >27 && handsHolding == false && gauntletIMUx > 70  && gauntletIMUx<100 && gauntletIMUy<0 && gauntletIMUz <0) {
       if (shootOn == false ) {
         shootOn = true;
         power.pause();
         power.rewind();
-
         gauntletWipe();
-        delay(500);
+        delay(250);
         shoot.trigger();
-        success++;
         gauntletColor("white", 255, 28);
-        gauntletShow();
         delay(1000); 
         gauntletLevel =0;
         shootOn = false;
       }
     }
-
 
     //println(handsHolding);//FOR DEBUG
   } 
@@ -169,14 +172,10 @@ checkHealth();
     restSong.pause();
     if (overallHealth>500) {
       gauntletColor("flash", 255, 28);
-      gauntletShow();
       tankColor("flash", 255, 10);
-      tankShow();
     } else {
       gauntletColor("fire", 100, 28);
-      gauntletShow();
       tankColor("fire", 100, 10);
-      tankShow();
     }
     if (!gameOverSong.isPlaying()) {
       gameOverSong.loop();
@@ -191,16 +190,35 @@ checkHealth();
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+////////FUNCTIONS////////////////
 
+void resetEverything() {
+  state = REST;
+  gameSong.pause();
+  gameSong.rewind();
+  gameOverSong.pause();
+  gameOverSong.rewind();
+  restSong.pause();
+  restSong.rewind();
 
-void checkTank() {
+  setUpTimer();
+
+  gauntletWipe();
+  tankWipe();
+  ELOff();
+
+  success=0;
+  health = 0;
+  hurt = 0;
   
 
+  overallHealth = 100;
+  totalHealth = overallHealth;
+  tankDucked = false;
+}
 
-
+void checkTank() {
 //  println(sweetSpot);
   if (proxVal >50 && proxVal <80) {
 
@@ -211,7 +229,7 @@ void checkTank() {
   if (sweetSpot == true && lastSweetSpot == true) {
     sweetSpotCounter++;
   }
-  if (sweetSpotCounter >10 && sweetSpot == false && lastSweetSpot == false) {
+  if (sweetSpotCounter >20 && sweetSpot == false && lastSweetSpot == false) {
     tankLevel++;
     ELOn();
     if (!charge.isPlaying()) {
@@ -223,7 +241,6 @@ void checkTank() {
       tankLevel = 10;
     }
   }
-
 
   lastSweetSpot = sweetSpot;
   
@@ -240,32 +257,13 @@ void depleteTank() {
   }
 }
 
-void depleteFast () {
+void depleteFast() {
   counterDepleteFast++;
   if (counterDepleteFast%50 ==0) {
     tankLevel --;
   }
 }
 
-void resetEverything() {
-  setupGUI();
-  setupSound();
-  setupOSC();
-  setUpTimer();
-  state = REST;
-  gauntletWipe();
-  tankWipe();
-  ELOff();
-  success=0;
-  health = 0;
-  hurt = 0;
-  img = loadImage("attractmode.png");
-  img2 = loadImage("submitfirst.png");
-logo = loadImage("logo.png");
-  overallHealth = 100;
-  totalHealth = overallHealth;
-tankDucked = false;
-}
 
 void tankDuckCheck(){
 if ((tankIMUz-lastTankIMUz)>10 && tankOnce == false){
