@@ -35,7 +35,7 @@ void setupGUI () {
   c = new GUIController(this);
 
   //glText, a1Text, a2Text, a3Text
-  glText= new IFTextField("", width/3-50, 150, 45, "120"); //1 min = 60 seconds, 2 mins = 120 seconds, 3 minds = 180 seconds
+  glText= new IFTextField("", width/3-50, 150, 45, "90"); //1 min = 60 seconds, 2 mins = 120 seconds, 3 minds = 180 seconds
   a1Text= new IFTextField("", width/3-50, 200, 45, "0");
   a2Text= new IFTextField("", width/3-50, 225, 45, "2");
   a3Text= new IFTextField("", width/3-50, 250, 45, "3");
@@ -44,7 +44,7 @@ void setupGUI () {
   //glLabel, glHint, a1Label, a1Hint, a2Label, a2Hint, a3Label, a3Hint;
   titleLabel = new IFLabel("", width/2-75, 25);
   glLabel = new IFLabel("Game Length\n(seconds):", 50, 155);
-  glHint = new IFLabel("* default 120", width/3, 155);
+  glHint = new IFLabel("* default 90", width/3, 155);
   a1Label = new IFLabel("Stage1 Attacks:", 50, 205);
   a1Hint = new IFLabel("* default 0", width/3, 205);
   a2Label = new IFLabel("Stage2 Attacks:", 50, 230);
@@ -208,6 +208,12 @@ void actionPerformed (GUIEvent e) {
   ///////////////////ATRRACT///////////////////
   else if (e.getSource() == attractButton && gameOn == false) {  
     attractOn = !attractOn;
+    if (!attractOn){
+       delay(500);
+      tankWipe();
+       delay(500);
+      gauntletWipe();
+}
   } 
 
   ///////////////////PLAY///////////////////
@@ -220,6 +226,7 @@ void actionPerformed (GUIEvent e) {
     pressPause();
   }
   ding.trigger();
+  delay(500);
 }
 
 void pressPlay() {

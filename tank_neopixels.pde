@@ -3,7 +3,8 @@
 byte[] tankBlob = new byte [90];
 int numOfPixels; 
 int remainingPixels;
-
+float tankCounter;
+float tankBlah;
 //////////////////////FUNCTIONS//////////////////////////////
 
 void tankColor(String colorName, int brightness, int levels) {
@@ -59,6 +60,16 @@ void tankColor(String colorName, int brightness, int levels) {
     }
   tankShow();
   }
+//--------------------------------------------------------------------
+  else if (colorName == "breath") {
+    tankCounter=tankCounter+ .035;
+  tankBlah = 0.5*(sin(tankCounter)+1);
+   tankColor("white", int(brightness* tankBlah), levels);
+  tankShow();
+
+  }
+
+
   //--------------------------------------------------------------------
   else if (colorName == "teal") {
     //turn on LED color for as many levels

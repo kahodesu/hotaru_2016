@@ -1,7 +1,8 @@
 //////////////////////VARIABLES//////////////////
 
 byte[] gauntletBlob = new byte [84];
-
+float gauntletCounter;
+float gauntletBlah;
 //////////////////////FUNCTIONS//////////////////////////////
 
 void gauntletColor(String colorName, int brightness, int neopixels) {
@@ -55,6 +56,15 @@ void gauntletColor(String colorName, int brightness, int neopixels) {
       gauntletBlob[i+2] = byte(0);
     }
   gauntletShow();
+  
+  }
+  //--------------------------------------------------------------------
+  else if (colorName == "breath") {
+    gauntletCounter=gauntletCounter+ .035;
+  gauntletBlah = 0.5*(sin(gauntletCounter)+1);
+   gauntletColor("white", int(brightness* gauntletBlah), neopixels );
+  gauntletShow();
+
   }
   //--------------------------------------------------------------------
   else if (colorName == "teal") {
